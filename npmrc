@@ -11,5 +11,5 @@ init-module = ${XDG_CONFIG_HOME}/npm/init.js
 init-version = 0.0.0
 init-author-name  = ${GIT_AUTHOR_NAME}
 init-author-email = ${GIT_AUTHOR_EMAIL}
-init-author-url = https://${GITHUB_USER}.me
+init-author-url = https://${GITHUB_USER}.dev
 init-license = MIT
