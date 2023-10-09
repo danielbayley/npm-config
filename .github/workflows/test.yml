@@ -1,0 +1,42 @@
+#name: Run tests
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version, or versions as CSV array.
+        type: string
+        required: false
+        default: 18, 19, 20
+
+    outputs:
+      package-manager:
+        description: Detected package manager.
+        value: ${{ jobs[0].outputs.package-manager }}
+
+jobs:
+  Node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(format('[{0}]', inputs.node-version)) }}
+
+    outputs:
+      package-manager: ${{ steps.setup-node.outputs.package-manager }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Node.js ${{ matrix.node-version }} and dependencies
+      id: setup-node
+      uses: danielbayley/create-npm-package@main
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Run tests
+      if: steps.setup-node.outputs.package-manager != 'yarn'
+      run: ${{ steps.setup-node.outputs.package-manager }} run --if-present test
+
+    - name: Run tests
+      if: steps.setup-node.outputs.package-manager == 'yarn'
+      run: yarn test

@@ -1,0 +1,96 @@
+# https://code.visualstudio.com/api/references/extension-manifest
+# https://json.schemastore.org/package
+version: 0.0.0
+name: create-npm-package #create-package FIXME #create-node-module #@danielbayley TODO #create-fabric
+description: TODO.
+#keywords:
+#- TODO
+
+homepage: https://github.com/danielbayley/create-npm-package#readme
+repository: https://github.com/danielbayley/create-npm-package
+bugs: https://github.com/danielbayley/create-npm-package/issues #&bugs #/discussions/categories/q-a
+  #url:
+  #email: &email daniel.bayley@me.com
+
+author: #Daniel Bayley <daniel.bayley@me.com> (https://github.com/danielbayley)
+  #<<: *bugs
+  name: Daniel Bayley
+  email: daniel.bayley@me.com #*email
+  url: danielbayley.dev #https://github.com/danielbayley
+
+license: MIT
+funding: https://github.com/sponsors/danielbayley
+  #type: github
+  #url:
+#- type: custom
+  #url: https://paypal.com/paypalme/danieljbayley #https://danielbayley.dev/sponsor #/donate
+
+#private: true
+#os: [darwin, win32]
+type: module
+# TODO https://nodejs.org/api/packages.html#conditional-exports
+# https://sensedeep.com/blog/posts/2021/how-to-create-single-source-npm-module.html
+exports: &index index.js #./ #&esm
+  #import: &index index.js #.mjs
+  #require: index.cjs #.js
+#bin: TODO
+#files: [*index, TODO]
+#- *index
+#types: index.d.ts
+engines:
+  node: ">=18" #>=14 #.16 #15
+  #vscode: ^1.29.0
+
+packageManager: pnpm@8.9.0
+#devDependencies: {} # TODO Non-essential?
+dependencies:
+  "@lerepo/detect-pm-cli": ^0.4.3
+  fast-glob: ^3.3.1
+  #preferred-pm: ^3.1.2
+  promzard: ^1.0.0
+  #which-pm: ^2.1.1
+  yamljs: ^0.3.0
+
+#coffeelintConfig: #eslint TODO
+  #no_tabs:
+    #level: ignore
+  #indentation:
+    #value: 1
+    #level: error
+
+babel:
+  presets: ["@babel/preset-env"] #, targets: [ node: current ]]
+
+#config:
+  #global: true
+  #yaml2json: TODO yaml2json package.y*ml --save --pretty
+
+scripts: # TODO
+  #package: cson2json $DOTFILES/npm/*.cson > $PREFIX/lib/package.json #NODE_PATH #pnpm-global-pkg
+  #sync:
+
+  build: pnpm /^build.+/
+  build.manifest: yaml2json package.y*ml --save --pretty #--indentation ${TABSIZE:-2} #${=TABSIZE:+--indentation $TABSIZE}
+  #build.coffee: coffee --bare **/*.coffee #--literate #--map
+
+  #install: TODO #mv node_*/[a-z-0-9]* $NODE_PATH
+  prepare: pnpm build #.manifest
+  #postinstall: TODO #bash -c shopt -s extglob; ln -s $NODE_PATH/!(npm)/{bin/*,autoprefixer} `npm --global bin` && rm node_*
+  #atom.coffeelint: cson2json coffeelint.cson > \$ATOM_HOME\/coffeelint.json
+  #compile: coffee --bare *. #-l
+  #compile:extendscript: TODO
+
+  test: exit 0
+
+  envy: env
+
+  #watch: pnpm /^watch.+/
+  watch.manifest: pnpm build.manifest --watch
+  watch.coffee: $npm_package_scripts_build_coffee --watch
+
+
+# TODO
+# https://cli.github.com/manual/gh_repo_create
+# gh repo create $1 --template $npm_package_name --clone #${GITHUB_USER:-TODO}/ #${npm_package_repository%/*}
+#~/dev
+#--public
