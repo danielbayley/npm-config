@@ -1,0 +1,48 @@
+name: Node.js package CI
+description: Simple, flexible CI for your Node packages.
+author: Daniel Bayley
+branding:
+  icon: package
+  color: red
+
+inputs:
+  node-version:
+    description: Node.js version.
+    required: true
+
+outputs:
+  package-manager:
+    description: Detected package manager.
+    value: ${{ steps.detect-pm.outputs.package-manager }}
+
+runs:
+  using: composite
+  steps:
+  - uses: actions/setup-node@v4
+    with:
+      node-version: ${{ inputs.node-version }}
+
+  - shell: sh
+    run: corepack enable
+
+  - id: detect-pm
+    shell: sh
+    run: |
+      npm exec --package @lerepo/detect-pm-cli --yes -- detect-pm --json |
+      yq '"package-manager=" + .name' >> $GITHUB_OUTPUT
+
+  - uses: actions/setup-node@v4
+    with:
+      cache: ${{ steps.detect-pm.outputs.package-manager }}
+
+  - if: steps.detect-pm.outputs.package-manager != 'pnpm' && steps.detect-pm.outputs.package-manager != 'yarn'
+    shell: sh
+    run: npm ci
+
+  - if: steps.detect-pm.outputs.package-manager == 'pnpm'
+    shell: sh
+    run: pnpm install --frozen-lockfile
+
+  - if: steps.detect-pm.outputs.package-manager == 'yarn'
+    shell: sh
+    run: yarn install --immutable

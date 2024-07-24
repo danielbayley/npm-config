@@ -1,0 +1,46 @@
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+name: CI
+on:
+  push:
+    branches: [main]
+
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version, or versions in CSV format.
+        type: string
+        required: false
+
+    outputs:
+      package-manager:
+        description: Detected package manager.
+        value: ${{ jobs[0].outputs.package-manager }}
+
+jobs:
+  Node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(format('[{0}]', inputs.node-version || '18, 19, 20, 21, 22')) }}
+
+    outputs:
+      package-manager: ${{ steps.setup-node.outputs.package-manager }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # https://docs.github.com/actions/automating-builds-and-tests/building-and-testing-nodejs
+    - name: Install Node.js ${{ matrix.node-version }} and dependencies
+      id: setup-node
+      uses: danielbayley/create-npm-package@main
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Run tests
+      if: steps.setup-node.outputs.package-manager != 'yarn'
+      run: ${{ steps.setup-node.outputs.package-manager }} run --if-present test
+
+    - name: Run tests
+      if: steps.setup-node.outputs.package-manager == 'yarn'
+      run: yarn test
