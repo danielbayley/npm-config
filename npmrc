@@ -1,5 +1,5 @@
-# https://docs.npmjs.com/cli/v9/configuring-npm/npmrc
-# https://docs.npmjs.com/cli/v9/using-npm/config#config-settings
+# https://docs.npmjs.com/cli/configuring-npm/npmrc
+# https://docs.npmjs.com/cli/v11/using-npm/config#config-settings
 
 # login
 //registry.npmjs.org/:_authToken = ${NPM_TOKEN}
